@@ -1,76 +1,150 @@
-# FixMyData
+# Asian Battle Royale - Game Tracker
 
-A client-side data cleaning tool built with Next.js that allows users to upload messy CSV files, view them in a clean table, and automatically fill missing values in numerical columns.
+A comprehensive web application for tracking and managing the Asian Battle Royale simulation game. This app automates backend tracking, data management, and visualization while players use external tools like Age of Conflict for map simulation and wheel spinners for action selection.
 
-## Features
+## Features Implemented (Phase 1 - ~50%)
 
-- **CSV Upload**: Upload CSV files directly in your browser
-- **Data Visualization**: View your data in a clean, scrollable table
-- **Smart Data Cleaning**: Automatically detect numerical columns and fill missing values with column means
-- **Download Cleaned Data**: Export your cleaned data as a new CSV file
-- **Missing Value Detection**: Visual indicators for missing or null values
+### ✅ Core Features
+- **Profile System**: Create and manage multiple player profiles
+- **Game State Management**: Track all 50 Asian countries with gold and status
+- **Turn Execution Wizard**: Step-by-step turn input system
+- **Battle Resolution**: Automatic gold calculations for all battle outcomes
+- **Undo Functionality**: Undo the last turn if needed
+- **Alliance Management**: Create, manage, and dissolve alliances
+- **Real-time Dashboard**: Live statistics and power rankings
+- **Countries Table**: Sortable, filterable table with all nation data
+- **Turn History**: Complete log of all game actions
+- **LocalStorage Persistence**: Auto-save every turn
 
-## Tech Stack
+### 🎮 Supported Actions
+**Military Actions:**
+- Direct Attack (Random, Weakest, Strongest, Neighbor)
+- Nuclear Strike
+- Guerrilla Insurgency
+- Proxy War
 
-- **Next.js 15**: React framework with App Router
-- **TypeScript**: Type-safe development
-- **TailwindCSS**: Utility-first CSS framework
-- **Shadcn/UI**: Beautiful, accessible UI components
-- **Papaparse**: Powerful CSV parser
-- **Lucide React**: Icon library
+**Economic Actions:**
+- Economic Sanctions
+- Steal Resources
+- Economic Aid
+- Sabotage Economy
+- Trade Embargo
+
+**Diplomatic Actions:**
+- Form Military Alliance
+- Break Alliance
+- Peace Treaty
+- Peaceful Unification (coming soon)
+
+**Strategic Actions:**
+- Military Buildup
+- Fortify Borders
+- Espionage Mission
+
+### 📊 Battle Outcomes
+- Decisive Victory
+- Crushing Defeat
+- Pyrrhic Victory
+- Heroic Defense
+- Stalemate
+- White Peace
+- Partial Conquest
+- Failed Invasion
+- Puppet State
+- Resistance Victory
 
 ## Getting Started
 
-### Prerequisites
-
-- Node.js 18+ installed
-- npm or yarn package manager
-
 ### Installation
-
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd FixYourData
-```
-
-2. Install dependencies:
 ```bash
 npm install
 ```
 
-3. Run the development server:
+### Development
 ```bash
 npm run dev
 ```
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-## Usage
-
-1. Click "Choose CSV File" to upload a CSV file
-2. View your data in the table - missing values are highlighted in red
-3. Click "Fill Missing Values" to automatically clean the data
-   - The tool detects numerical columns
-   - Replaces null, empty, or "null" values with the column mean
-4. Download the cleaned data using the "Download" button
-
-## How It Works
-
-The `cleanData()` function:
-
-1. Iterates through each column in the dataset
-2. Determines if a column is numerical (at least 50% of non-empty values are numbers)
-3. Calculates the mean of all valid numerical values in that column
-4. Replaces missing values (`null`, empty strings, or "null") with the calculated mean (rounded to 2 decimal places)
-
-## Building for Production
-
+### Build for Production
 ```bash
 npm run build
-npm start
 ```
+
+## How to Play
+
+1. **Create a Profile**: Start by creating a player profile
+2. **Start New Game**: Configure starting gold (default: 100 per country)
+3. **Execute Turns**:
+   - Select acting country
+   - Choose action
+   - Select target (if required)
+   - Choose battle outcome (if attacking)
+   - Execute turn
+4. **Track Progress**: View dashboard, power rankings, and history
+5. **Manage Alliances**: Create alliances between countries
+6. **Undo Mistakes**: Use the undo button to revert the last turn
+
+## Tech Stack
+
+- **Frontend**: React 18 + TypeScript
+- **Styling**: TailwindCSS
+- **State Management**: Zustand
+- **Build Tool**: Vite
+- **Storage**: LocalStorage
+
+## Project Structure
+
+```
+src/
+├── components/          # React components
+│   ├── AllianceManager.tsx
+│   ├── CountriesTable.tsx
+│   ├── Dashboard.tsx
+│   ├── HistoryLog.tsx
+│   ├── ProfileSelector.tsx
+│   └── TurnExecutor.tsx
+├── data/               # Game data
+│   ├── actions.ts
+│   └── countries.ts
+├── store/              # State management
+│   └── gameStore.ts
+├── types/              # TypeScript types
+│   └── index.ts
+├── utils/              # Utility functions
+│   ├── battleResolver.ts
+│   └── goldCalculator.ts
+├── App.tsx             # Main app component
+├── main.tsx            # Entry point
+└── index.css           # Global styles
+```
+
+## Coming Soon (Phase 2 - Next 50%)
+
+- 🎨 Gold flow visualization charts
+- 📈 Enhanced statistics and analytics
+- 🎯 Neighbor detection improvements
+- 🔄 Peaceful unification/merger system
+- 📤 Export to Excel/CSV
+- 🎲 Integrated wheel spinners
+- 🎭 Multiple save game slots
+- 🔄 Game replay mode
+- 🏆 Achievement system
+- ☁️ Cloud save functionality
+
+## Game Rules
+
+- All 50 Asian countries start with equal gold (customizable)
+- Countries can attack, form alliances, perform economic actions, etc.
+- Battle outcomes determine gold transfers and annexations
+- Annexed countries are eliminated from the game
+- Alliances can combine forces for defense
+- Status modifiers (Weakened, Strengthened, Fortified) affect battles
+- Game continues until one country/alliance dominates
 
 ## License
 
-MIT
+MIT License - Feel free to use and modify!
+
+## Credits
+
+Created for the Asian Battle Royale game simulation project.
