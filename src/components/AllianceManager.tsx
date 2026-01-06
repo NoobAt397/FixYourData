@@ -32,13 +32,15 @@ export default function AllianceManager() {
   const activeAlliances = currentGame.alliances.filter(a => a.status === 'active');
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 p-4">
+    <div className="bg-gradient-to-br from-gray-800 via-cyan-900/10 to-gray-900 rounded-2xl border-2 border-cyan-500/30 shadow-[0_0_30px_rgba(6,182,212,0.15)] p-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold text-white">Alliance Manager</h2>
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">🤝</span> Alliance Manager
+        </h2>
         {!showCreateForm && (
           <button
             onClick={() => setShowCreateForm(true)}
-            className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+            className="px-3 py-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-cyan-500/50 transition-all duration-300 hover:scale-105"
           >
             + Create Alliance
           </button>

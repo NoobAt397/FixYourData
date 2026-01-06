@@ -105,14 +105,16 @@ export default function CountriesTable() {
   if (!currentGame) return null;
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+    <div className="bg-gradient-to-br from-gray-800 via-green-900/10 to-gray-900 rounded-2xl border-2 border-green-500/30 shadow-[0_0_30px_rgba(34,197,94,0.15)] overflow-hidden">
       <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">Nations Table</h2>
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">🗺️</span> Nations Table
+        </h2>
         <div className="flex gap-2">
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="px-3 py-1 bg-gray-700 text-white rounded border border-gray-600 text-sm"
+            className="px-3 py-1 bg-gray-700 text-white rounded-xl border border-gray-600 text-sm focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/50"
           >
             <option value="all">All Status</option>
             <option value="active">Active Only</option>
