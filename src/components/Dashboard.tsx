@@ -10,11 +10,11 @@ export default function Dashboard() {
     const activeCountries = getActiveCountries();
     const annexed = currentGame.countries.filter(c => c.status === 'annexed');
     const merged = currentGame.countries.filter(c => c.status === 'merged');
-    const totalGold = currentGame.countries
-      .filter(c => c.status === 'active')
-      .reduce((sum, c) => sum + c.gold, 0);
+    const avgPowerLevel = activeCountries.length > 0
+      ? activeCountries.reduce((sum, c) => sum + c.powerLevel, 0) / activeCountries.length
+      : 0;
 
-    const sortedByGold = [...activeCountries].sort((a, b) => b.gold - a.gold);
+    const sortedByPower = [...activeCountries].sort((a, b) => b.powerLevel - a.powerLevel);
     const sortedByTerritory = [...activeCountries].sort((a, b) => b.territorySize - a.territorySize);
 
     return {
@@ -23,8 +23,8 @@ export default function Dashboard() {
       activeCount: activeCountries.length,
       annexedCount: annexed.length,
       mergedCount: merged.length,
-      totalGold,
-      topByGold: sortedByGold.slice(0, 5),
+      avgPowerLevel,
+      topByPower: sortedByPower.slice(0, 5),
       topByTerritory: sortedByTerritory.slice(0, 5),
       activeAlliances: currentGame.alliances.filter(a => a.status === 'active'),
     };
@@ -57,8 +57,8 @@ export default function Dashboard() {
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="bg-black bg-opacity-30 rounded p-3">
-            <div className="text-gray-300 text-sm">Total Gold in Play</div>
-            <div className="text-yellow-400 text-xl font-bold">{stats.totalGold.toLocaleString()}</div>
+            <div className="text-gray-300 text-sm">Average Power Level</div>
+            <div className="text-yellow-400 text-xl font-bold">{stats.avgPowerLevel.toFixed(1)} / 10</div>
           </div>
           <div className="bg-black bg-opacity-30 rounded p-3">
             <div className="text-gray-300 text-sm">Active Alliances</div>
@@ -69,13 +69,13 @@ export default function Dashboard() {
 
       {/* Power Rankings */}
       <div className="grid md:grid-cols-2 gap-4">
-        {/* Top 5 by Gold */}
+        {/* Top 5 by Power Level */}
         <div className="bg-gray-800 rounded-lg border border-gray-700 p-4">
           <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
-            <span>💰</span> Top 5 by Gold
+            <span>⚡</span> Top 5 by Power Level
           </h3>
           <div className="space-y-2">
-            {stats.topByGold.map((country, index) => (
+            {stats.topByPower.map((country, index) => (
               <div
                 key={country.id}
                 className="flex items-center justify-between p-2 bg-gray-700 rounded hover:bg-gray-600"
@@ -86,7 +86,25 @@ export default function Dashboard() {
                   </span>
                   <span className="text-white font-semibold">{country.name}</span>
                 </div>
-                <span className="text-yellow-400 font-bold">{country.gold}</span>
+                <div className="flex items-center gap-2">
+                  <span className={`font-bold ${
+                    country.powerLevel >= 8 ? 'text-green-400' :
+                    country.powerLevel >= 5 ? 'text-yellow-400' :
+                    'text-red-400'
+                  }`}>
+                    {country.powerLevel}/10
+                  </span>
+                  <div className="w-16 bg-gray-600 rounded-full h-2">
+                    <div
+                      className={`h-full rounded-full ${
+                        country.powerLevel >= 8 ? 'bg-green-400' :
+                        country.powerLevel >= 5 ? 'bg-yellow-400' :
+                        'bg-red-400'
+                      }`}
+                      style={{ width: `${country.powerLevel * 10}%` }}
+                    />
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -127,7 +145,9 @@ export default function Dashboard() {
               const members = alliance.members
                 .map(mId => currentGame.countries.find(c => c.id === mId))
                 .filter(Boolean);
-              const totalGold = members.reduce((sum, m) => sum + (m?.gold || 0), 0);
+              const avgPower = members.length > 0
+                ? members.reduce((sum, m) => sum + (m?.powerLevel || 0), 0) / members.length
+                : 0;
 
               return (
                 <div
@@ -136,7 +156,7 @@ export default function Dashboard() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-blue-400 font-semibold">{alliance.name}</span>
-                    <span className="text-yellow-400 text-sm">Combined Gold: {totalGold}</span>
+                    <span className="text-yellow-400 text-sm">Avg Power: {avgPower.toFixed(1)}/10</span>
                   </div>
                   <div className="text-sm text-gray-300">
                     Members: {members.map(m => m?.name).join(', ')}

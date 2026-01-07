@@ -1,6 +1,6 @@
 import { Country } from '../types';
 
-export const INITIAL_COUNTRIES: Omit<Country, 'gold' | 'status' | 'alliances' | 'modifiers'>[] = [
+export const INITIAL_COUNTRIES: Omit<Country, 'powerLevel' | 'status' | 'alliances' | 'modifiers'>[] = [
   { id: 'afghanistan', name: 'Afghanistan', territorySize: 1, isOriginal: true },
   { id: 'armenia', name: 'Armenia', territorySize: 1, isOriginal: true },
   { id: 'azerbaijan', name: 'Azerbaijan', territorySize: 1, isOriginal: true },

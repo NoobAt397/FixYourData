@@ -11,10 +11,11 @@ export default function EnhancedStats() {
     const annexed = currentGame.countries.filter(c => c.status === 'annexed');
 
     // Calculate various statistics
-    const totalGold = activeCountries.reduce((sum, c) => sum + c.gold, 0);
-    const avgGold = activeCountries.length > 0 ? Math.floor(totalGold / activeCountries.length) : 0;
-    const maxGold = Math.max(...activeCountries.map(c => c.gold), 0);
-    const minGold = activeCountries.length > 0 ? Math.min(...activeCountries.map(c => c.gold)) : 0;
+    const avgPowerLevel = activeCountries.length > 0
+      ? activeCountries.reduce((sum, c) => sum + c.powerLevel, 0) / activeCountries.length
+      : 0;
+    const maxPowerLevel = Math.max(...activeCountries.map(c => c.powerLevel), 0);
+    const minPowerLevel = activeCountries.length > 0 ? Math.min(...activeCountries.map(c => c.powerLevel)) : 0;
 
     const totalTerritories = activeCountries.reduce((sum, c) => sum + c.territorySize, 0);
     const avgTerritory = activeCountries.length > 0 ? (totalTerritories / activeCountries.length).toFixed(1) : 0;
@@ -36,10 +37,9 @@ export default function EnhancedStats() {
     const actionsPerTurn = currentGame.turn > 0 ? currentGame.turnHistory.length / currentGame.turn : 0;
 
     return {
-      totalGold,
-      avgGold,
-      maxGold,
-      minGold,
+      avgPowerLevel,
+      maxPowerLevel,
+      minPowerLevel,
       totalTerritories,
       avgTerritory,
       mostAggressive: mostAggressive ? {
@@ -61,25 +61,21 @@ export default function EnhancedStats() {
       </h2>
 
       <div className="grid grid-cols-2 gap-3">
-        {/* Gold Statistics */}
+        {/* Power Level Statistics */}
         <div className="col-span-2 p-4 bg-gradient-to-r from-yellow-900/20 to-orange-900/20 rounded-xl border border-yellow-500/20">
-          <h3 className="text-yellow-400 font-semibold mb-2 text-sm">💰 Gold Economy</h3>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <h3 className="text-yellow-400 font-semibold mb-2 text-sm">⚡ Power Levels</h3>
+          <div className="grid grid-cols-3 gap-2 text-xs">
             <div>
-              <div className="text-gray-400">Total Gold</div>
-              <div className="text-yellow-400 font-bold text-lg">{stats.totalGold.toLocaleString()}</div>
-            </div>
-            <div>
-              <div className="text-gray-400">Average Gold</div>
-              <div className="text-yellow-400 font-bold text-lg">{stats.avgGold.toLocaleString()}</div>
+              <div className="text-gray-400">Average</div>
+              <div className="text-yellow-400 font-bold text-lg">{stats.avgPowerLevel.toFixed(1)}/10</div>
             </div>
             <div>
               <div className="text-gray-400">Highest</div>
-              <div className="text-green-400 font-semibold">{stats.maxGold.toLocaleString()}</div>
+              <div className="text-green-400 font-semibold text-lg">{stats.maxPowerLevel}/10</div>
             </div>
             <div>
               <div className="text-gray-400">Lowest</div>
-              <div className="text-red-400 font-semibold">{stats.minGold.toLocaleString()}</div>
+              <div className="text-red-400 font-semibold text-lg">{stats.minPowerLevel}/10</div>
             </div>
           </div>
         </div>

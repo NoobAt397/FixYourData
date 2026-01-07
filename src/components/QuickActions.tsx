@@ -23,9 +23,10 @@ export default function QuickActions() {
 
   const activeNations = currentGame.countries.filter(c => c.status === 'active').length;
   const eliminatedNations = currentGame.countries.filter(c => c.status === 'annexed').length;
-  const totalGold = currentGame.countries
-    .filter(c => c.status === 'active')
-    .reduce((sum, c) => sum + c.gold, 0);
+  const activeCountries = currentGame.countries.filter(c => c.status === 'active');
+  const avgPowerLevel = activeCountries.length > 0
+    ? activeCountries.reduce((sum, c) => sum + c.powerLevel, 0) / activeCountries.length
+    : 0;
 
   return (
     <div className="space-y-4">
@@ -47,8 +48,8 @@ export default function QuickActions() {
           </div>
 
           <div className="flex items-center justify-between p-2 bg-yellow-900/20 rounded-xl border border-yellow-500/20">
-            <span className="text-gray-300 text-sm">💰 Total Gold</span>
-            <span className="text-yellow-400 font-bold text-lg">{totalGold.toLocaleString()}</span>
+            <span className="text-gray-300 text-sm">⚡ Avg Power</span>
+            <span className="text-yellow-400 font-bold text-lg">{avgPowerLevel.toFixed(1)}/10</span>
           </div>
         </div>
       </div>

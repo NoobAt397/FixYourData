@@ -7,16 +7,18 @@ export default function GoldFlowChart() {
   const flowData = useMemo(() => {
     if (!currentGame) return { topGainers: [], topLosers: [] };
 
-    // Calculate total gold changes per country
-    const goldChanges: Record<string, number> = {};
+    // Calculate total power changes per country
+    const powerChanges: Record<string, number> = {};
 
     currentGame.turnHistory.forEach(entry => {
-      Object.entries(entry.goldChanges).forEach(([countryId, amount]) => {
-        goldChanges[countryId] = (goldChanges[countryId] || 0) + amount;
-      });
+      if (entry.powerChanges) {
+        Object.entries(entry.powerChanges).forEach(([countryId, amount]) => {
+          powerChanges[countryId] = (powerChanges[countryId] || 0) + (amount as number);
+        });
+      }
     });
 
-    const entries = Object.entries(goldChanges).map(([id, change]) => ({
+    const entries = Object.entries(powerChanges).map(([id, change]) => ({
       country: currentGame.countries.find(c => c.id === id),
       change
     })).filter(e => e.country);
@@ -42,7 +44,7 @@ export default function GoldFlowChart() {
   return (
     <div className="bg-gradient-to-br from-gray-800 via-emerald-900/10 to-gray-900 rounded-2xl border-2 border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.15)] p-6">
       <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-        <span className="text-2xl">💸</span> Gold Flow Analysis
+        <span className="text-2xl">⚡</span> Power Flow Analysis
       </h2>
 
       <div className="grid md:grid-cols-2 gap-4">
@@ -120,7 +122,7 @@ export default function GoldFlowChart() {
       </div>
 
       <div className="mt-4 pt-4 border-t border-gray-700 text-xs text-gray-500 text-center">
-        Total gold changes tracked across {currentGame.turnHistory.length} turns
+        Total power changes tracked across {currentGame.turnHistory.length} turns
       </div>
     </div>
   );

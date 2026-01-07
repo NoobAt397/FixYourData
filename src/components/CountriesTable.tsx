@@ -2,12 +2,12 @@ import { useState, useMemo } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { Country } from '../types';
 
-type SortField = 'name' | 'gold' | 'territorySize' | 'status';
+type SortField = 'name' | 'powerLevel' | 'territorySize' | 'status';
 type SortOrder = 'asc' | 'desc';
 
 export default function CountriesTable() {
   const { currentGame } = useGameStore();
-  const [sortField, setSortField] = useState<SortField>('gold');
+  const [sortField, setSortField] = useState<SortField>('powerLevel');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [filterStatus, setFilterStatus] = useState<'all' | 'active' | 'annexed' | 'merged'>('all');
 
@@ -29,8 +29,8 @@ export default function CountriesTable() {
         case 'name':
           comparison = a.name.localeCompare(b.name);
           break;
-        case 'gold':
-          comparison = a.gold - b.gold;
+        case 'powerLevel':
+          comparison = a.powerLevel - b.powerLevel;
           break;
         case 'territorySize':
           comparison = a.territorySize - b.territorySize;
@@ -136,9 +136,9 @@ export default function CountriesTable() {
               </th>
               <th
                 className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-600"
-                onClick={() => handleSort('gold')}
+                onClick={() => handleSort('powerLevel')}
               >
-                Gold {sortField === 'gold' && (sortOrder === 'asc' ? '↑' : '↓')}
+                Power Level {sortField === 'powerLevel' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th
                 className="px-4 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider cursor-pointer hover:bg-gray-600"
@@ -164,7 +164,28 @@ export default function CountriesTable() {
             {sortedAndFilteredCountries.map((country) => (
               <tr key={country.id} className="hover:bg-gray-750">
                 <td className="px-4 py-3 text-white font-medium">{country.name}</td>
-                <td className="px-4 py-3 text-yellow-400 font-semibold">{country.gold}</td>
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-2">
+                    <span className={`font-bold text-lg ${
+                      country.powerLevel >= 8 ? 'text-green-400' :
+                      country.powerLevel >= 5 ? 'text-yellow-400' :
+                      'text-red-400'
+                    }`}>
+                      {country.powerLevel}
+                    </span>
+                    <div className="w-20 bg-gray-600 rounded-full h-3">
+                      <div
+                        className={`h-full rounded-full ${
+                          country.powerLevel >= 8 ? 'bg-green-400' :
+                          country.powerLevel >= 5 ? 'bg-yellow-400' :
+                          'bg-red-400'
+                        }`}
+                        style={{ width: `${country.powerLevel * 10}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500">/10</span>
+                  </div>
+                </td>
                 <td className={`px-4 py-3 font-medium ${getStatusColor(country.status)}`}>
                   {getStatusIcon(country.status)} {country.status.charAt(0).toUpperCase() + country.status.slice(1)}
                 </td>

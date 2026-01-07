@@ -23,7 +23,9 @@ export default function MergerPanel() {
 
   const country1 = currentGame?.countries.find(c => c.id === country1Id);
   const country2 = currentGame?.countries.find(c => c.id === country2Id);
-  const combinedGold = (country1?.gold || 0) + (country2?.gold || 0);
+  const avgPowerLevel = country1 && country2
+    ? Math.round(((country1.powerLevel || 0) + (country2.powerLevel || 0)) / 2)
+    : 0;
   const combinedTerritory = (country1?.territorySize || 0) + (country2?.territorySize || 0);
 
   if (!currentGame) return null;
@@ -71,7 +73,7 @@ export default function MergerPanel() {
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((country) => (
                   <option key={country.id} value={country.id}>
-                    {country.name} (Gold: {country.gold}, Territory: {country.territorySize})
+                    {country.name} (Power: {country.powerLevel}/10, Territory: {country.territorySize})
                   </option>
                 ))}
             </select>
@@ -93,7 +95,7 @@ export default function MergerPanel() {
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((country) => (
                   <option key={country.id} value={country.id}>
-                    {country.name} (Gold: {country.gold}, Territory: {country.territorySize})
+                    {country.name} (Power: {country.powerLevel}/10, Territory: {country.territorySize})
                   </option>
                 ))}
             </select>
@@ -125,7 +127,7 @@ export default function MergerPanel() {
                   <span className="text-yellow-400 font-bold">{newName}</span>
                 </p>
                 <p className="text-gray-300">
-                  Combined Gold: <span className="text-yellow-400 font-semibold">{combinedGold}</span>
+                  Avg Power Level: <span className="text-yellow-400 font-semibold">{avgPowerLevel}/10</span>
                 </p>
                 <p className="text-gray-300">
                   Combined Territory: <span className="text-green-400 font-semibold">{combinedTerritory}</span>
