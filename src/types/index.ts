@@ -4,7 +4,7 @@ export type StatusModifier = 'weakened-1' | 'weakened-2' | 'strengthened-1' | 's
 export interface Country {
   id: string;
   name: string;
-  gold: number;
+  powerLevel: number; // 1-10 scale (1-3: Weak, 4-6: Average, 7-9: Strong, 10: Dominant)
   status: CountryStatus;
   territorySize: number;
   alliances: string[];
@@ -62,7 +62,10 @@ export interface TurnHistoryEntry {
   action: ActionType;
   target?: string;
   outcome?: BattleOutcome;
-  goldChanges: Record<string, number>;
+  prediction: string; // What player expects to happen
+  reality: string; // What actually happened in Age of Conflict
+  powerChanges: Record<string, number>; // Manual power level adjustments
+  territoryChanges: Record<string, number>; // Territory size changes
   notes: string;
   timestamp: number;
 }

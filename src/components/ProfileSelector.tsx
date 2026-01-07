@@ -6,7 +6,7 @@ export default function ProfileSelector() {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newProfileName, setNewProfileName] = useState('');
   const [showStartGame, setShowStartGame] = useState(false);
-  const [startingGold, setStartingGold] = useState(100);
+  const [startingPowerLevel, setStartingPowerLevel] = useState(5);
 
   const handleCreateProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,8 +21,8 @@ export default function ProfileSelector() {
 
   const handleStartGame = () => {
     if (currentProfile) {
-      console.log('🎮 Starting new game for profile:', currentProfile.name, 'with', startingGold, 'gold');
-      startNewGame(currentProfile.name, startingGold);
+      console.log('🎮 Starting new game for profile:', currentProfile.name, 'with starting power level:', startingPowerLevel);
+      startNewGame(currentProfile.name, startingPowerLevel);
       setShowStartGame(false);
       console.log('✅ Game start command sent!');
     } else {
@@ -59,16 +59,16 @@ export default function ProfileSelector() {
               <span>⚙️</span> Game Settings
             </h3>
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-gray-300 mb-2">Starting Gold per Country</label>
+              <label className="block text-sm font-semibold text-gray-300 mb-2">Starting Power Level per Country</label>
               <input
                 type="number"
-                value={startingGold}
-                onChange={(e) => setStartingGold(parseInt(e.target.value) || 100)}
+                value={startingPowerLevel}
+                onChange={(e) => setStartingPowerLevel(parseInt(e.target.value) || 5)}
                 className="w-full px-4 py-3 bg-gray-800 text-white rounded-xl border-2 border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 text-lg font-semibold"
-                min={10}
-                max={1000}
+                min={1}
+                max={10}
               />
-              <p className="text-xs text-gray-500 mt-1">Default: 100 gold per nation</p>
+              <p className="text-xs text-gray-500 mt-1">Scale: 1-3 (Weak), 4-6 (Average), 7-9 (Strong), 10 (Dominant)</p>
             </div>
             <div className="flex gap-3">
               <button

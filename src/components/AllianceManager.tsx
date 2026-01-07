@@ -80,7 +80,7 @@ export default function AllianceManager() {
                     className="w-4 h-4"
                   />
                   <span className="text-white">{country.name}</span>
-                  <span className="text-gray-400 text-sm">(Gold: {country.gold})</span>
+                  <span className="text-gray-400 text-sm">(Power: {country.powerLevel}/10)</span>
                 </label>
               ))}
             </div>
@@ -124,7 +124,9 @@ export default function AllianceManager() {
             const members = alliance.members
               .map(mId => currentGame.countries.find(c => c.id === mId))
               .filter(Boolean);
-            const totalGold = members.reduce((sum, m) => sum + (m?.gold || 0), 0);
+            const avgPower = members.length > 0
+              ? members.reduce((sum, m) => sum + (m?.powerLevel || 0), 0) / members.length
+              : 0;
             const totalTerritory = members.reduce((sum, m) => sum + (m?.territorySize || 0), 0);
 
             return (
@@ -148,7 +150,7 @@ export default function AllianceManager() {
                     Members: <span className="text-white font-semibold">{members.length}</span>
                   </div>
                   <div className="text-gray-300">
-                    Combined Gold: <span className="text-yellow-400 font-semibold">{totalGold}</span>
+                    Avg Power: <span className="text-yellow-400 font-semibold">{avgPower.toFixed(1)}/10</span>
                   </div>
                   <div className="text-gray-300">
                     Territory: <span className="text-green-400 font-semibold">{totalTerritory}</span>

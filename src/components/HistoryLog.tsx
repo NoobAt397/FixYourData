@@ -86,10 +86,24 @@ export default function HistoryLog() {
                   </div>
                 )}
 
-                {Object.keys(entry.goldChanges).length > 0 && (
-                  <div className="text-sm text-gray-400">
-                    Gold Changes:
-                    {Object.entries(entry.goldChanges).map(([countryId, amount]) => {
+                {entry.prediction && (
+                  <div className="mt-2 p-2 bg-purple-900/20 rounded-lg border border-purple-500/30">
+                    <div className="text-xs font-semibold text-purple-300 mb-1">🔮 Prediction:</div>
+                    <div className="text-sm text-gray-300 italic">"{entry.prediction}"</div>
+                  </div>
+                )}
+
+                {entry.reality && (
+                  <div className="mt-2 p-2 bg-green-900/20 rounded-lg border border-green-500/30">
+                    <div className="text-xs font-semibold text-green-300 mb-1">📝 Reality:</div>
+                    <div className="text-sm text-gray-300">"{entry.reality}"</div>
+                  </div>
+                )}
+
+                {entry.powerChanges && Object.keys(entry.powerChanges).length > 0 && (
+                  <div className="text-sm text-gray-400 mt-2">
+                    <span className="font-semibold">⚡ Power Changes:</span>
+                    {Object.entries(entry.powerChanges).map(([countryId, amount]) => {
                       const country = currentGame.countries.find(c => c.id === countryId);
                       return (
                         <span key={countryId} className="ml-2">

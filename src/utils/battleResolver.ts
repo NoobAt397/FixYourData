@@ -95,14 +95,14 @@ export function mergeCountries(
   }
 
   const newCountryId = `${country1Id}-${country2Id}-union`;
-  const combinedGold = country1.gold + country2.gold;
+  const averagePowerLevel = Math.round((country1.powerLevel + country2.powerLevel) / 2);
   const combinedTerritory = country1.territorySize + country2.territorySize;
   const combinedAlliances = [...new Set([...country1.alliances, ...country2.alliances])];
 
   const newCountry: Country = {
     id: newCountryId,
     name: newName,
-    gold: combinedGold,
+    powerLevel: Math.min(10, averagePowerLevel + 1), // Slight boost for unification
     status: 'active',
     territorySize: combinedTerritory,
     alliances: combinedAlliances,
@@ -167,16 +167,16 @@ export function getCountryById(countries: Country[], id: string): Country | unde
   return countries.find(c => c.id === id);
 }
 
-export function sortByGold(countries: Country[], descending = true): Country[] {
+export function sortByPowerLevel(countries: Country[], descending = true): Country[] {
   return [...countries].sort((a, b) =>
-    descending ? b.gold - a.gold : a.gold - b.gold
+    descending ? b.powerLevel - a.powerLevel : a.powerLevel - b.powerLevel
   );
 }
 
 export function getWeakestCountries(countries: Country[], count = 3): Country[] {
-  return sortByGold(getActiveCountries(countries), false).slice(0, count);
+  return sortByPowerLevel(getActiveCountries(countries), false).slice(0, count);
 }
 
 export function getStrongestCountries(countries: Country[], count = 3): Country[] {
-  return sortByGold(getActiveCountries(countries), true).slice(0, count);
+  return sortByPowerLevel(getActiveCountries(countries), true).slice(0, count);
 }

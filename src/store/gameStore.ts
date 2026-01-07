@@ -1,8 +1,7 @@
 import { create } from 'zustand';
 import { GameState, Country, Alliance, TurnHistoryEntry, Profile, ActionType, BattleOutcome } from '../types';
 import { INITIAL_COUNTRIES } from '../data/countries';
-import { calculateGoldChanges, applyGoldChanges } from '../utils/goldCalculator';
-import { resolveBattleEffects, annexCountry, mergeCountries, addModifier, getActiveCountries } from '../utils/battleResolver';
+import { mergeCountries, getActiveCountries } from '../utils/battleResolver';
 
 interface GameStore {
   // Current game state
@@ -20,7 +19,7 @@ interface GameStore {
   listProfiles: () => Profile[];
 
   // Game actions
-  startNewGame: (profileName: string, startingGold?: number) => void;
+  startNewGame: (profileName: string, startingPowerLevel?: number) => void;
   loadGame: (gameId: string) => void;
   saveGame: () => void;
 
@@ -30,6 +29,10 @@ interface GameStore {
     action: ActionType,
     targetId: string | null,
     outcome: BattleOutcome | null,
+    prediction: string,
+    reality: string,
+    powerChanges: Record<string, number>,
+    territoryChanges: Record<string, number>,
     customNotes?: string
   ) => void;
   undoLastTurn: () => boolean;
@@ -137,8 +140,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   // Game management
-  startNewGame: (_profileName: string, startingGold = 100) => {
-    console.log('🚀 startNewGame called with:', { _profileName, startingGold });
+  startNewGame: (_profileName: string, startingPowerLevel = 5) => {
+    console.log('🚀 startNewGame called with:', { _profileName, startingPowerLevel });
     const profile = get().currentProfile;
     if (!profile) {
       console.error('❌ No profile selected');
@@ -149,7 +152,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const gameId = `game-${Date.now()}`;
     const countries: Country[] = INITIAL_COUNTRIES.map(c => ({
       ...c,
-      gold: startingGold,
+      powerLevel: startingPowerLevel,
       status: 'active' as const,
       alliances: [],
       modifiers: []
@@ -207,6 +210,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     action: ActionType,
     targetId: string | null,
     outcome: BattleOutcome | null,
+    prediction: string,
+    reality: string,
+    powerChanges: Record<string, number>,
+    territoryChanges: Record<string, number>,
     customNotes?: string
   ) => {
     const game = get().currentGame;
@@ -220,40 +227,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     if (!actor) return;
 
-    // Calculate gold changes
-    const goldChanges = calculateGoldChanges(action, actor, target, outcome, game.countries);
-    let updatedCountries = applyGoldChanges(game.countries, goldChanges);
+    // Apply manual power level changes
+    let updatedCountries = game.countries.map(c => {
+      const powerChange = powerChanges[c.id] || 0;
+      const territoryChange = territoryChanges[c.id] || 0;
 
-    // Handle battle effects (annexation, modifiers, etc.)
-    if (target && outcome) {
-      const battleResult = resolveBattleEffects(actorId, targetId!, outcome);
-
-      if (battleResult.annexedCountry && battleResult.annexedBy) {
-        updatedCountries = annexCountry(
-          updatedCountries,
-          battleResult.annexedCountry,
-          battleResult.annexedBy
-        );
-      }
-
-      battleResult.modifiersAdded.forEach(({ countryId, modifier }) => {
-        updatedCountries = addModifier(updatedCountries, countryId, modifier);
-      });
-
-      // Handle puppet state alliance
-      if (battleResult.allianceFormed) {
-        const allianceId = `alliance-${Date.now()}`;
-        const newAlliance: Alliance = {
-          id: allianceId,
-          name: `${actor.name}-${target.name} Alliance`,
-          members: [actorId, targetId!],
-          formedTurn: game.turn + 1,
-          formedYear: game.year + 1,
-          status: 'active'
+      if (powerChange !== 0 || territoryChange !== 0) {
+        return {
+          ...c,
+          powerLevel: Math.max(1, Math.min(10, c.powerLevel + powerChange)),
+          territorySize: Math.max(0, c.territorySize + territoryChange)
         };
-        game.alliances.push(newAlliance);
       }
-    }
+      return c;
+    });
+
+    // Handle manual status changes (if country marked as annexed in reality)
+    // This will be handled by the QuickUpdatePanel component
 
     // Handle special actions
     if (action === 'form-alliance' && targetId) {
@@ -277,20 +267,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       });
     }
 
-    if (action === 'military-buildup') {
-      updatedCountries = addModifier(updatedCountries, actorId, 'strengthened-2');
-    }
-
-    if (action === 'fortify-borders') {
-      updatedCountries = addModifier(updatedCountries, actorId, 'fortified');
-    }
-
     // Create turn history entry
-    const goldChangesMap: Record<string, number> = {};
-    goldChanges.forEach(change => {
-      goldChangesMap[change.countryId] = (goldChangesMap[change.countryId] || 0) + change.amount;
-    });
-
     const turnEntry: TurnHistoryEntry = {
       turn: game.turn + 1,
       year: game.year + 1,
@@ -298,7 +275,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       action,
       target: targetId || undefined,
       outcome: outcome || undefined,
-      goldChanges: goldChangesMap,
+      prediction,
+      reality,
+      powerChanges,
+      territoryChanges,
       notes: customNotes || `${actor.name} executed ${action}${target ? ` against ${target.name}` : ''}`,
       timestamp: Date.now()
     };
@@ -447,7 +427,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       actor: country1Id,
       action: 'peaceful-unification',
       target: country2Id,
-      goldChanges: {},
+      prediction: `Merger planned between two nations`,
+      reality: `${newName} successfully formed from merger`,
+      powerChanges: {},
+      territoryChanges: {},
       notes: `${newName} formed from merger`,
       timestamp: Date.now()
     };
