@@ -138,11 +138,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // Game management
   startNewGame: (_profileName: string, startingGold = 100) => {
+    console.log('🚀 startNewGame called with:', { _profileName, startingGold });
     const profile = get().currentProfile;
     if (!profile) {
-      console.error('No profile selected');
+      console.error('❌ No profile selected');
       return;
     }
+    console.log('✅ Profile found:', profile.name);
 
     const gameId = `game-${Date.now()}`;
     const countries: Country[] = INITIAL_COUNTRIES.map(c => ({
@@ -152,6 +154,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       alliances: [],
       modifiers: []
     }));
+    console.log('✅ Created', countries.length, 'countries');
 
     const newGame: GameState = {
       gameId,
@@ -164,9 +167,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       createdAt: Date.now(),
       lastModified: Date.now()
     };
+    console.log('✅ Created new game state:', gameId);
 
     set({ currentGame: newGame, previousGameState: null });
     saveGameToStorage(newGame);
+    console.log('✅ Game saved to localStorage');
 
     // Update profile games count
     const updatedProfile = { ...profile, gamesCount: profile.gamesCount + 1, lastPlayed: Date.now() };
@@ -176,6 +181,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ currentProfile: updatedProfile, profiles: updatedProfiles });
     saveProfiles(updatedProfiles);
     saveCurrentProfile(updatedProfile);
+    console.log('✅ Profile updated. Games count:', updatedProfile.gamesCount);
+    console.log('🎮 NEW GAME READY! Should show dashboard now.');
   },
 
   loadGame: (gameId: string) => {

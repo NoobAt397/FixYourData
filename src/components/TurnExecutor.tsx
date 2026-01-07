@@ -67,8 +67,10 @@ export default function TurnExecutor() {
   if (!currentGame) return null;
 
   return (
-    <div className="bg-gray-800 rounded-lg p-6 border border-gray-700">
-      <h2 className="text-2xl font-bold text-white mb-6">Execute Turn</h2>
+    <div className="bg-gradient-to-br from-gray-800 via-blue-900/10 to-gray-900 rounded-2xl border-2 border-blue-500/30 shadow-[0_0_30px_rgba(59,130,246,0.15)] p-6">
+      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+        <span className="text-3xl">🎯</span> Execute Turn
+      </h2>
 
       <div className="space-y-4">
         {/* Step 1: Select Actor */}
@@ -83,7 +85,7 @@ export default function TurnExecutor() {
               setSelectedTarget('');
               setSelectedOutcome('');
             }}
-            className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+            className="w-full px-3 py-2 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
           >
             <option value="">-- Select Country --</option>
             {activeCountries
@@ -109,7 +111,7 @@ export default function TurnExecutor() {
                 setSelectedTarget('');
                 setSelectedOutcome('');
               }}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
             >
               <option value="">-- Select Action --</option>
               {ACTIONS.map((action) => (
@@ -141,7 +143,7 @@ export default function TurnExecutor() {
                 setSelectedTarget(e.target.value);
                 setSelectedOutcome('');
               }}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
             >
               <option value="">-- Select Target --</option>
               {availableTargets
@@ -167,7 +169,7 @@ export default function TurnExecutor() {
             <select
               value={selectedOutcome}
               onChange={(e) => setSelectedOutcome(e.target.value as BattleOutcome)}
-              className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-xl border border-gray-600 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/50 transition-all duration-300"
             >
               <option value="">-- Select Outcome --</option>
               {BATTLE_OUTCOMES.map((outcome) => (
@@ -188,19 +190,19 @@ export default function TurnExecutor() {
         <button
           onClick={handleExecute}
           disabled={!canExecute}
-          className={`w-full px-6 py-3 rounded-lg font-semibold text-white ${
+          className={`w-full px-6 py-3 rounded-xl font-semibold text-white transition-all duration-300 ${
             canExecute
-              ? 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+              ? 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 cursor-pointer shadow-lg hover:shadow-blue-500/50 hover:scale-105'
               : 'bg-gray-600 cursor-not-allowed opacity-50'
           }`}
         >
-          Execute Turn
+          ⚡ Execute Turn
         </button>
 
         {/* Preview */}
         {canExecute && (
-          <div className="p-4 bg-gray-700 rounded-lg border border-gray-600">
-            <h3 className="text-sm font-semibold text-gray-300 mb-2">Preview:</h3>
+          <div className="p-4 bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-xl border border-purple-500/30 shadow-[0_0_20px_rgba(168,85,247,0.1)]">
+            <h3 className="text-sm font-semibold text-purple-300 mb-2">✨ Preview:</h3>
             <p className="text-white">
               <span className="text-blue-400">{actorCountry?.name}</span>
               {' will execute '}

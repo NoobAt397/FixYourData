@@ -19,15 +19,17 @@ export default function HistoryLog() {
   const recentHistory = [...currentGame.turnHistory].reverse().slice(0, 10);
 
   return (
-    <div className="bg-gray-800 rounded-lg border border-gray-700">
+    <div className="bg-gradient-to-br from-gray-800 via-orange-900/10 to-gray-900 rounded-2xl border-2 border-orange-500/30 shadow-[0_0_30px_rgba(249,115,22,0.15)]">
       <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-white">Turn History</h2>
+        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+          <span className="text-2xl">📜</span> Turn History
+        </h2>
         <button
           onClick={handleUndo}
           disabled={!previousGameState}
-          className={`px-4 py-2 rounded font-semibold text-sm ${
+          className={`px-4 py-2 rounded-xl font-semibold text-sm transition-all duration-300 ${
             previousGameState
-              ? 'bg-red-600 hover:bg-red-700 text-white cursor-pointer'
+              ? 'bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-700 hover:to-pink-700 text-white cursor-pointer shadow-lg hover:shadow-red-500/50 hover:scale-105'
               : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'
           }`}
         >
