@@ -1,7 +1,7 @@
 import { GameState } from '../types';
 
 export function exportToCSV(game: GameState): string {
-  const headers = ['Turn', 'Year', 'Actor', 'Action', 'Target', 'Outcome', 'Gold Changes', 'Notes'];
+  const headers = ['Turn', 'Year', 'Actor', 'Action', 'Target', 'Outcome', 'Prediction', 'Reality', 'Power Changes', 'Notes'];
 
   const rows = game.turnHistory.map(entry => [
     entry.turn,
@@ -10,12 +10,14 @@ export function exportToCSV(game: GameState): string {
     entry.action,
     entry.target ? game.countries.find(c => c.id === entry.target)?.name || entry.target : '-',
     entry.outcome || '-',
-    Object.entries(entry.goldChanges)
+    entry.prediction || '-',
+    entry.reality || '-',
+    entry.powerChanges ? Object.entries(entry.powerChanges)
       .map(([id, amount]) => {
         const country = game.countries.find(c => c.id === id);
-        return `${country?.name || id}: ${amount >= 0 ? '+' : ''}${amount}`;
+        return `${country?.name || id}: ${(amount as number) >= 0 ? '+' : ''}${amount}`;
       })
-      .join('; '),
+      .join('; ') : '-',
     entry.notes
   ]);
 
@@ -28,11 +30,11 @@ export function exportToCSV(game: GameState): string {
 }
 
 export function exportCountriesToCSV(game: GameState): string {
-  const headers = ['Name', 'Gold', 'Status', 'Territory Size', 'Alliances', 'Modifiers', 'Is Original'];
+  const headers = ['Name', 'Power Level', 'Status', 'Territory Size', 'Alliances', 'Modifiers', 'Is Original'];
 
   const rows = game.countries.map(country => [
     country.name,
-    country.gold,
+    `${country.powerLevel}/10`,
     country.status,
     country.territorySize,
     country.alliances.map(aId => {
@@ -70,10 +72,12 @@ export function exportGameSummary(game: GameState): string {
   const annexed = game.countries.filter(c => c.status === 'annexed');
   const merged = game.countries.filter(c => c.status === 'merged');
 
-  const topByGold = [...activeCountries].sort((a, b) => b.gold - a.gold).slice(0, 10);
+  const topByPower = [...activeCountries].sort((a, b) => b.powerLevel - a.powerLevel).slice(0, 10);
   const topByTerritory = [...activeCountries].sort((a, b) => b.territorySize - a.territorySize).slice(0, 10);
 
-  const totalGold = activeCountries.reduce((sum, c) => sum + c.gold, 0);
+  const avgPowerLevel = activeCountries.length > 0
+    ? activeCountries.reduce((sum, c) => sum + c.powerLevel, 0) / activeCountries.length
+    : 0;
 
   let summary = `ASIAN BATTLE ROYALE - GAME SUMMARY\n`;
   summary += `${'='.repeat(50)}\n\n`;
@@ -89,13 +93,13 @@ export function exportGameSummary(game: GameState): string {
   summary += `Active Nations: ${activeCountries.length}\n`;
   summary += `Annexed Nations: ${annexed.length}\n`;
   summary += `Merged Nations: ${merged.length}\n`;
-  summary += `Total Gold in Play: ${totalGold}\n`;
+  summary += `Average Power Level: ${avgPowerLevel.toFixed(1)}/10\n`;
   summary += `Active Alliances: ${game.alliances.filter(a => a.status === 'active').length}\n\n`;
 
-  summary += `TOP 10 BY GOLD\n`;
+  summary += `TOP 10 BY POWER LEVEL\n`;
   summary += `${'-'.repeat(50)}\n`;
-  topByGold.forEach((country, index) => {
-    summary += `${index + 1}. ${country.name}: ${country.gold} gold\n`;
+  topByPower.forEach((country, index) => {
+    summary += `${index + 1}. ${country.name}: ${country.powerLevel}/10\n`;
   });
   summary += `\n`;
 
